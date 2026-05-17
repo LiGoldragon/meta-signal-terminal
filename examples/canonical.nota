@@ -1,0 +1,7 @@
+;; Canonical NOTA examples for owner-signal-persona-terminal.
+
+(CreateSession operator (TerminalCommand pi []) [] None)
+(RetireSession operator)
+(SessionCreated operator "/run/persona/terminal/sessions/operator/data.sock")
+(SessionRetired operator (StatusUnavailable))
+(OwnerTerminalRequestUnimplemented operator CreateSession NotBuiltYet)
