@@ -25,36 +25,49 @@ shape and orders terminal session lifecycle through this OwnerSignal
 surface. `persona-terminal` owns the actual component state and session
 processes.
 
-## MUST IMPLEMENT — signal architecture migration
+## MUST IMPLEMENT — three-layer migration
 
-This contract is migrating to contract-local verbs per
-`primary/reports/designer/238-signal-architecture-redirection-contract-local-verbs.md`
-and `primary/reports/designer/239-signal-architecture-migration-plan.md`.
+This contract is migrating to the three-layer model affirmed
+2026-05-20 per
+`primary/reports/designer/246-v4-bundled-fix-deep-design-with-examples.md`
+and `primary/reports/designer/248-three-layer-changes-for-operators.md`.
 
-Drop the `Mutate CreateSession` / `Retract RetireSession` wrapping.
+**Layer 1 — Contract Operations on the wire (this crate).** Drop the
+`Mutate CreateSession` / `Retract RetireSession` wrapping entirely.
 The contract-local owner verbs are `CreateSession` and `RetireSession`
 directly (already verb-form). Alternatively, lift the `Session`
 suffix to the payload and use `Create` and `Retire` with payloads
-named `Session` — this matches the pattern across the other
-owner-signal-* crates where `Configure` carries `Configuration` and
-`Register` carries `Registration`. Move verb-to-Sema lowering
-(`CreateSession` → `Assert` session row plus child-process start
-effect, `RetireSession` → `Retract` session row plus child-process
-stop effect) into `persona-terminal`. The dependency on `signal-core`
-shifts to `signal-frame`.
+named `Session`.
 
-References: `primary/reports/designer/238-signal-architecture-redirection-contract-local-verbs.md`,
-`primary/reports/designer/239-signal-architecture-migration-plan.md`.
+**Layer 2 — Component Commands.** Lowering from contract operation to
+typed Component Commands (`CreateSession` →
+`TerminalCommand::AssertSessionRecord` plus
+`TerminalCommand::StartChildProcess`; `RetireSession` →
+`TerminalCommand::RetractSessionRecord` plus
+`TerminalCommand::StopChildProcess`) lives in the `persona-terminal`
+daemon.
+
+**Layer 3 — Sema classification.** Each Component Command projects to
+a payloadless Sema class label via `ToSemaOperation` for observation.
+
+**Frame layer.** The dependency on `signal-core` shifts to
+`signal-frame`.
+
+References:
+- `primary/reports/designer/246-v4-bundled-fix-deep-design-with-examples.md`
+- `primary/reports/designer/248-three-layer-changes-for-operators.md`
+- `primary/skills/component-triad.md` §"Verbs come in three layers"
+- `primary/skills/contract-repo.md` §"Public contracts use contract-local operation verbs"
 
 **Note to remover:** when the refactor lands, remove this section and
-add a `## Migration history — contract-local verbs (2026-05-XX)`
+add a `## Migration history — three-layer model (2026-05-XX)`
 paragraph noting the shape change.
 
 ## 1 · Contract surface
 
-| Request | Signal verb | Meaning |
+| Request | Projected Sema class | Meaning |
 |---|---|---|
-| `CreateSession` | `Mutate` | Install a named terminal session in `persona-terminal` and start the configured child process. |
+| `CreateSession` | `Mutate` (session-record component projection) | Install a named terminal session in `persona-terminal` and start the configured child process. |
 | `RetireSession` | `Retract` | Retire a named terminal session and return its terminal exit status when available. |
 
 | Reply | Meaning |
@@ -80,7 +93,7 @@ or worker-lifecycle records.
 | Constraint | Witness |
 |---|---|
 | Session lifecycle orders live only in the owner contract. | The ordinary `signal-persona-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both owner variants. |
-| Every owner request declares a Signal root verb. | `OwnerTerminalRequest::signal_verb()` returns `Mutate` for `CreateSession` and `Retract` for `RetireSession`. |
+| Every owner request is a contract-local verb in verb form (after migration). | Round-trip tests assert each variant's NOTA head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, or socket implementation. |
 | Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_persona_terminal::TerminalName` and `TerminalExitStatus`. |
 
@@ -108,3 +121,4 @@ tests/
 - `signal-persona-terminal/ARCHITECTURE.md`
 - `persona-terminal/ARCHITECTURE.md`
 - `terminal-cell/ARCHITECTURE.md`
+- `~/primary/skills/component-triad.md` §"Verbs come in three layers".
