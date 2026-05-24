@@ -1,14 +1,14 @@
-# owner-signal-persona-terminal — architecture
+# owner-signal-terminal — architecture
 
 *OwnerSignal contract for privileged Persona terminal session lifecycle.*
 
 ## 0 · TL;DR
 
-`owner-signal-persona-terminal` is the owner-only Signal surface for
-`persona-terminal`. It carries the requests that create or retire
+`owner-signal-terminal` is the owner-only Signal surface for
+`terminal`. It carries the requests that create or retire
 terminal sessions. Those operations are privileged because they start
 or stop child process state owned by the terminal component. Ordinary
-terminal callers use `signal-persona-terminal`; they cannot express
+terminal callers use `signal-terminal`; they cannot express
 session lifecycle orders through that vocabulary.
 
 The first owner chain is:
@@ -16,13 +16,13 @@ The first owner chain is:
 ```mermaid
 flowchart LR
     orchestrate["persona-orchestrate"] --> harness["persona-harness"]
-    harness --> terminal["persona-terminal"]
+    harness --> terminal["terminal"]
     terminal --> cell["terminal-cell library"]
 ```
 
 `persona-orchestrate` orders harness work. The harness knows adapter
 shape and orders terminal session lifecycle through this OwnerSignal
-surface. `persona-terminal` owns the actual component state and session
+surface. `terminal` owns the actual component state and session
 processes.
 
 ## MUST IMPLEMENT — three-layer migration
@@ -44,7 +44,7 @@ typed Component Commands (`CreateSession` →
 `TerminalCommand::AssertSessionRecord` plus
 `TerminalCommand::StartChildProcess`; `RetireSession` →
 `TerminalCommand::RetractSessionRecord` plus
-`TerminalCommand::StopChildProcess`) lives in the `persona-terminal`
+`TerminalCommand::StopChildProcess`) lives in the `terminal`
 daemon.
 
 **Layer 3 — Sema classification.** Each Component Command projects to
@@ -67,7 +67,7 @@ paragraph noting the shape change.
 
 | Request | Projected Sema class | Meaning |
 |---|---|---|
-| `CreateSession` | `Mutate` (session-record component projection) | Install a named terminal session in `persona-terminal` and start the configured child process. |
+| `CreateSession` | `Mutate` (session-record component projection) | Install a named terminal session in `terminal` and start the configured child process. |
 | `RetireSession` | `Retract` | Retire a named terminal session and return its terminal exit status when available. |
 
 | Reply | Meaning |
@@ -79,7 +79,7 @@ paragraph noting the shape change.
 ## 2 · Shared nouns
 
 This crate imports terminal identity and status nouns from
-`signal-persona-terminal`:
+`signal-terminal`:
 
 - `TerminalName`
 - `TerminalExitStatus`
@@ -92,10 +92,10 @@ or worker-lifecycle records.
 
 | Constraint | Witness |
 |---|---|
-| Session lifecycle orders live only in the owner contract. | The ordinary `signal-persona-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both owner variants. |
+| Session lifecycle orders live only in the owner contract. | The ordinary `signal-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both owner variants. |
 | Every owner request is a contract-local verb in verb form (after migration). | Round-trip tests assert each variant's NOTA head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, or socket implementation. |
-| Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_persona_terminal::TerminalName` and `TerminalExitStatus`. |
+| Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_terminal::TerminalName` and `TerminalExitStatus`. |
 
 ## 4 · Non-ownership
 
@@ -118,7 +118,7 @@ tests/
 
 ## See also
 
-- `signal-persona-terminal/ARCHITECTURE.md`
-- `persona-terminal/ARCHITECTURE.md`
+- `signal-terminal/ARCHITECTURE.md`
+- `terminal/ARCHITECTURE.md`
 - `terminal-cell/ARCHITECTURE.md`
 - `~/primary/skills/component-triad.md` §"Verbs come in three layers".

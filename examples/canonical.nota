@@ -1,4 +1,4 @@
-;; Canonical NOTA examples for owner-signal-persona-terminal.
+;; Canonical NOTA examples for owner-signal-terminal.
 
 (CreateSession (operator (pi []) [] None))
 (RetireSession (operator))

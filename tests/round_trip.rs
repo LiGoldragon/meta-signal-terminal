@@ -1,5 +1,5 @@
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
-use owner_signal_persona_terminal::{
+use owner_signal_terminal::{
     CreateSession, Frame, FrameBody, OwnerTerminalOperationKind, OwnerTerminalReply,
     OwnerTerminalRequest, OwnerTerminalRequestUnimplemented, OwnerTerminalUnimplementedReason,
     RetireSession, SessionCreated, SessionRetired, TerminalCommand, TerminalCommandArgument,

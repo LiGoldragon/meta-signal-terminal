@@ -1,8 +1,8 @@
-# owner-signal-persona-terminal
+# owner-signal-terminal
 
-OwnerSignal contract for privileged `persona-terminal` session
+OwnerSignal contract for privileged `terminal` session
 lifecycle.
 
 This crate owns the typed Signal vocabulary for creating and retiring
 terminal sessions. Ordinary terminal transport remains in
-`signal-persona-terminal`.
+`signal-terminal`.

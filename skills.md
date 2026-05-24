@@ -1,4 +1,4 @@
-# skills — owner-signal-persona-terminal
+# skills — owner-signal-terminal
 
 Read this before editing the owner-only terminal contract.
 
@@ -9,16 +9,16 @@ Read this before editing the owner-only terminal contract.
 - `~/primary/skills/architectural-truth-tests.md`
 - `~/primary/skills/nix-discipline.md`
 - this repo's `ARCHITECTURE.md`
-- `signal-persona-terminal/ARCHITECTURE.md`
-- `persona-terminal/ARCHITECTURE.md`
+- `signal-terminal/ARCHITECTURE.md`
+- `terminal/ARCHITECTURE.md`
 
 ## Boundary
 
 This crate owns the privileged OwnerSignal vocabulary for
-`persona-terminal` session lifecycle. It contains no daemon code, no
+`terminal` session lifecycle. It contains no daemon code, no
 actors, no sockets, and no storage code.
 
-The ordinary `signal-persona-terminal` crate owns the normal terminal
+The ordinary `signal-terminal` crate owns the normal terminal
 communication surface: input, resize, capture, prompt patterns, input
 gates, worker lifecycle, and read-only session lookup. This crate owns
 starting and retiring terminal sessions.
@@ -30,5 +30,5 @@ starting and retiring terminal sessions.
 - Every request variant declares a Signal root verb through
   `signal_channel!`.
 - Shared terminal nouns such as `TerminalName` and `TerminalExitStatus`
-  are imported from `signal-persona-terminal`; do not duplicate them.
-- Runtime interpretation stays in `persona-terminal`.
+  are imported from `signal-terminal`; do not duplicate them.
+- Runtime interpretation stays in `terminal`.

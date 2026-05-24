@@ -1,12 +1,12 @@
-//! OwnerSignal contract — privileged `persona-terminal` session lifecycle.
+//! OwnerSignal contract — privileged `terminal` session lifecycle.
 //!
-//! Ordinary terminal transport lives in `signal-persona-terminal`. This crate
+//! Ordinary terminal transport lives in `signal-terminal`. This crate
 //! carries the owner-only vocabulary that starts and retires terminal sessions.
 
 use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_core::signal_channel;
-pub use signal_persona_terminal::{TerminalExitStatus, TerminalName};
+pub use signal_terminal::{TerminalExitStatus, TerminalName};
 
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaTransparent, Debug, Clone, PartialEq, Eq, Hash,

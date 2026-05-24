@@ -1,5 +1,5 @@
 {
-  description = "owner-signal-persona-terminal - OwnerSignal contract for persona-terminal session lifecycle";
+  description = "owner-signal-terminal - OwnerSignal contract for terminal session lifecycle";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -55,7 +55,7 @@
           });
         };
         devShells.default = pkgs.mkShell {
-          name = "owner-signal-persona-terminal";
+          name = "owner-signal-terminal";
           packages = [ pkgs.jujutsu pkgs.pkg-config toolchain ];
         };
       });
