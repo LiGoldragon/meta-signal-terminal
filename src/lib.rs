@@ -166,7 +166,7 @@ pub struct RetireSession {
 )]
 pub struct SessionCreated {
     pub name: TerminalName,
-    pub data_socket_path: signal_engine_management::WirePath,
+    pub data_socket_path: signal_persona::WirePath,
 }
 
 #[derive(

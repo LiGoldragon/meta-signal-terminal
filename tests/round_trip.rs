@@ -14,7 +14,7 @@ use signal_frame::{
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
 fn terminal() -> TerminalName {
-    TerminalName::new("operator")
+    TerminalName::new("operator".to_string())
 }
 
 fn command() -> TerminalCommand {
@@ -31,8 +31,8 @@ fn environment() -> TerminalEnvironmentBinding {
     }
 }
 
-fn data_socket_path() -> signal_engine_management::WirePath {
-    signal_engine_management::WirePath::new("/run/persona/terminal/sessions/operator/data.sock")
+fn data_socket_path() -> signal_persona::WirePath {
+    signal_persona::WirePath::new("/run/persona/terminal/sessions/operator/data.sock")
 }
 
 fn exchange() -> ExchangeIdentifier {
@@ -191,7 +191,7 @@ fn meta_terminal_canonical_examples_round_trip() {
             name: terminal(),
             exit_status: Some(TerminalExitStatus::StatusUnavailable),
         }),
-        "(SessionRetired ([operator] (Some (StatusUnavailable))))",
+        "(SessionRetired ([operator] (Some StatusUnavailable)))",
     );
     round_trip_nota(
         MetaTerminalReply::MetaTerminalRequestUnimplemented(MetaTerminalRequestUnimplemented {
