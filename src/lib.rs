@@ -190,7 +190,7 @@ pub struct SessionRetired {
     Eq,
     Hash,
 )]
-pub enum OwnerTerminalOperationKind {
+pub enum MetaTerminalOperationKind {
     CreateSession,
     RetireSession,
 }
@@ -198,10 +198,10 @@ pub enum OwnerTerminalOperationKind {
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
 )]
-pub struct OwnerTerminalRequestUnimplemented {
+pub struct MetaTerminalRequestUnimplemented {
     pub terminal: TerminalName,
-    pub operation: OwnerTerminalOperationKind,
-    pub reason: OwnerTerminalUnimplementedReason,
+    pub operation: MetaTerminalOperationKind,
+    pub reason: MetaTerminalUnimplementedReason,
 }
 
 #[derive(
@@ -217,46 +217,46 @@ pub struct OwnerTerminalRequestUnimplemented {
     Eq,
     Hash,
 )]
-pub enum OwnerTerminalUnimplementedReason {
+pub enum MetaTerminalUnimplementedReason {
     NotBuiltYet,
     DependencyTrackNotLanded,
 }
 
 signal_channel! {
-    channel OwnerTerminal {
+    channel MetaTerminal {
         operation CreateSession(CreateSession),
         operation RetireSession(RetireSession),
     }
-    reply OwnerTerminalReply {
+    reply MetaTerminalReply {
         SessionCreated(SessionCreated),
         SessionRetired(SessionRetired),
-        OwnerTerminalRequestUnimplemented(OwnerTerminalRequestUnimplemented),
+        MetaTerminalRequestUnimplemented(MetaTerminalRequestUnimplemented),
     }
 }
 
-pub type OwnerTerminalRequest = Operation;
-pub type OwnerTerminalFrame = Frame;
-pub type OwnerTerminalFrameBody = FrameBody;
-pub type OwnerTerminalRequestBuilder = RequestBuilder;
+pub type MetaTerminalRequest = Operation;
+pub type MetaTerminalFrame = Frame;
+pub type MetaTerminalFrameBody = FrameBody;
+pub type MetaTerminalRequestBuilder = RequestBuilder;
 pub type ChannelRequest = Operation;
-pub type ChannelReply = OwnerTerminalReply;
+pub type ChannelReply = MetaTerminalReply;
 
-impl OwnerTerminalRequest {
-    pub fn operation_kind(&self) -> OwnerTerminalOperationKind {
+impl MetaTerminalRequest {
+    pub fn operation_kind(&self) -> MetaTerminalOperationKind {
         match self {
-            Self::CreateSession(_) => OwnerTerminalOperationKind::CreateSession,
-            Self::RetireSession(_) => OwnerTerminalOperationKind::RetireSession,
+            Self::CreateSession(_) => MetaTerminalOperationKind::CreateSession,
+            Self::RetireSession(_) => MetaTerminalOperationKind::RetireSession,
         }
     }
 }
 
-impl From<CreateSession> for OwnerTerminalRequest {
+impl From<CreateSession> for MetaTerminalRequest {
     fn from(payload: CreateSession) -> Self {
         Self::CreateSession(payload)
     }
 }
 
-impl From<RetireSession> for OwnerTerminalRequest {
+impl From<RetireSession> for MetaTerminalRequest {
     fn from(payload: RetireSession) -> Self {
         Self::RetireSession(payload)
     }

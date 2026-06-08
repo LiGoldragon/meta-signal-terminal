@@ -1,16 +1,20 @@
 [package]
-name         = "owner-signal-terminal"
+name         = "meta-signal-terminal"
 version      = "0.1.0"
 edition      = "2024"
 rust-version = "1.85"
 license      = "MIT OR Apache-2.0"
-repository   = "https://github.com/LiGoldragon/owner-signal-terminal"
+repository   = "https://github.com/LiGoldragon/meta-signal-terminal"
 description  = "Meta Signal contract for privileged terminal session lifecycle."
 publish      = false
 
 [lib]
-name = "owner_signal_terminal"
+name = "meta_signal_terminal"
 path = "src/lib.rs"
+
+[features]
+default = ["nota-text"]
+nota-text = ["signal-frame/nota-text"]
 
 [dependencies]
 signal-frame            = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main" }

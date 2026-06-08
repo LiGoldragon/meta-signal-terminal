@@ -1,4 +1,4 @@
-# skills — owner-signal-terminal
+# skills — meta-signal-terminal
 
 Read this before editing the meta-only terminal contract.
 

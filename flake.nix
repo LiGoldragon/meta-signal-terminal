@@ -1,5 +1,5 @@
 {
-  description = "owner-signal-terminal - OwnerSignal contract for terminal session lifecycle";
+  description = "meta-signal-terminal - MetaSignal contract for terminal session lifecycle";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -55,7 +55,7 @@
           });
         };
         devShells.default = pkgs.mkShell {
-          name = "owner-signal-terminal";
+          name = "meta-signal-terminal";
           packages = [ pkgs.jujutsu pkgs.pkg-config toolchain ];
         };
       });

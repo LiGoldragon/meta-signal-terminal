@@ -1,4 +1,4 @@
-# owner-signal-terminal
+# meta-signal-terminal
 
 Meta Signal contract for privileged `terminal` session lifecycle.
 

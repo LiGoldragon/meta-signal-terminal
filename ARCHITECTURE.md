@@ -1,17 +1,17 @@
-# owner-signal-terminal — architecture
+# meta-signal-terminal — architecture
 
 *Currently named meta Signal contract for privileged Persona terminal session lifecycle.*
 
 ## 0 · TL;DR
 
-`owner-signal-terminal` is the meta-only Signal surface for
+`meta-signal-terminal` is the meta-only Signal surface for
 `terminal`. It carries the requests that create or retire
 terminal sessions. Those operations are privileged because they start
 or stop child process state owned by the terminal component. Ordinary
 terminal callers use `signal-terminal`; they cannot express
 session lifecycle orders through that vocabulary.
 
-The first owner chain is:
+The first meta chain is:
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ codecs only.
 |---|---|
 | `SessionCreated` | The terminal daemon accepted the session and exposes the data socket path for viewers. |
 | `SessionRetired` | The terminal daemon retired the session. |
-| `OwnerTerminalRequestUnimplemented` | The request reached the meta surface but the current runtime path is not built yet. |
+| `MetaTerminalRequestUnimplemented` | The request reached the meta surface but the current runtime path is not built yet. |
 
 ## 2 · Shared nouns
 
@@ -89,9 +89,9 @@ or worker-lifecycle records.
 
 ```text
 src/
-└── lib.rs              — owner request/reply records and signal_channel! invocation
+└── lib.rs              — meta request/reply records and signal_channel! invocation
 examples/
-└── canonical.nota      — owner request/reply examples
+└── canonical.nota      — meta request/reply examples
 tests/
 └── round_trip.rs       — rkyv frame + NOTA + operation-head witnesses
 ```

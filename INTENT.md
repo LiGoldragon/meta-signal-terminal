@@ -1,4 +1,4 @@
-# INTENT — owner-signal-terminal
+# INTENT — meta-signal-terminal
 
 *The currently named meta-only wire contract for privileged Persona terminal session lifecycle.
 Defines the typed request/reply channel that `harness` uses to create and
@@ -8,7 +8,7 @@ Companion to `ARCHITECTURE.md` and `Cargo.toml`. Maintenance: `primary/skills/re
 ## Repo-scope only
 
 This file carries only the intent that is FOR this currently named
-meta-only `owner-signal-terminal` contract. Workspace-shape intent
+meta-only `meta-signal-terminal` contract. Workspace-shape intent
 stays in the primary workspace `primary/INTENT.md`.
 Component daemon intent stays in `terminal/INTENT.md`. Ordinary terminal input,
 capture, prompt-pattern, and worker-lifecycle traffic stays in
@@ -16,7 +16,7 @@ capture, prompt-pattern, and worker-lifecycle traffic stays in
 
 ## Why this repo exists
 
-`owner-signal-terminal` is the **meta-only authority surface** for `terminal`.
+`meta-signal-terminal` is the **meta-only authority surface** for `terminal`.
 It carries the requests that create or retire terminal sessions — privileged
 because they start or stop child-process state owned by the terminal component.
 The meta chain is `orchestrate` → `harness` → `terminal` →
@@ -28,13 +28,13 @@ vocabulary.
 
 ## The channel shape
 
-The owner channel carries (Layer 1 — contract-local verbs on the wire):
+The meta channel carries (Layer 1 — contract-local verbs on the wire):
 
 - **Requests:** `CreateSession` (install a named terminal session and start the
   configured child process), `RetireSession` (retire a named session and return
   its terminal exit status when available).
 - **Replies:** `SessionCreated` (session accepted; exposes the data-socket path
-  for viewers), `SessionRetired`, `OwnerTerminalRequestUnimplemented` (reached the
+  for viewers), `SessionRetired`, `MetaTerminalRequestUnimplemented` (reached the
   meta surface but the runtime path is not built yet).
 
 Shared nouns are imported, not copied: `TerminalName` and `TerminalExitStatus`
