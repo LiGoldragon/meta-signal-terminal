@@ -5,12 +5,14 @@ use meta_signal_terminal::{
     TerminalCommandExecutable, TerminalEnvironmentBinding, TerminalEnvironmentName,
     TerminalEnvironmentValue, TerminalExitStatus, TerminalName, TerminalWorkingDirectory,
 };
+#[cfg(feature = "nota-text")]
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, Request, SessionEpoch,
     SignalOperationHeads, SubReply,
 };
 
+#[cfg(feature = "nota-text")]
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
 fn terminal() -> TerminalName {
@@ -79,6 +81,7 @@ fn round_trip_reply(reply: MetaTerminalReply) -> MetaTerminalReply {
     }
 }
 
+#[cfg(feature = "nota-text")]
 fn round_trip_nota<T>(value: T, expected: &str)
 where
     T: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
@@ -161,6 +164,7 @@ fn meta_terminal_request_exposes_contract_owned_operation_kind() {
     );
 }
 
+#[cfg(feature = "nota-text")]
 #[test]
 fn meta_terminal_canonical_examples_round_trip() {
     round_trip_nota(
