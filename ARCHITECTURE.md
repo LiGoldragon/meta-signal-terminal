@@ -64,9 +64,9 @@ This crate imports terminal identity and status nouns from
 - `TerminalName`
 - `TerminalExitStatus`
 
-It also uses `signal-engine-management::WirePath` for session data-socket paths.
-It does not duplicate ordinary terminal input, capture, prompt-pattern,
-or worker-lifecycle records.
+The session data-socket path is a contract-local `WirePath` role because it is
+the meta reply's local viewer-attachment position, not ordinary terminal input,
+capture, prompt-pattern, or worker-lifecycle vocabulary.
 
 ## 3 · Constraints
 

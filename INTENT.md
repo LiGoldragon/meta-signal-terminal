@@ -37,9 +37,10 @@ The meta channel carries (Layer 1 — contract-local verbs on the wire):
   for viewers), `SessionRetired`, `MetaTerminalRequestUnimplemented` (reached the
   meta surface but the runtime path is not built yet).
 
-Shared nouns are imported, not copied: `TerminalName` and `TerminalExitStatus`
-from `signal-terminal`, and `signal-engine-management::WirePath` for session data-socket
-paths. The daemon lowers these operations to typed Component Commands (Layer 2,
+Shared terminal nouns are imported, not copied: `TerminalName` and
+`TerminalExitStatus` from `signal-terminal`. The session data-socket path is a
+contract-local `WirePath` role because no broader shared terminal-meta path noun
+owns that position. The daemon lowers these operations to typed Component Commands (Layer 2,
 e.g. `AssertSessionRecord` + `StartChildProcess`) which project to payloadless
 Sema labels (Layer 3) for observation.
 

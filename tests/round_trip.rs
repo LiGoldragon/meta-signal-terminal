@@ -3,7 +3,7 @@ use meta_signal_terminal::{
     MetaTerminalRequest, MetaTerminalRequestUnimplemented, MetaTerminalUnimplementedReason,
     RetireSession, SessionCreated, SessionRetired, TerminalCommand, TerminalCommandArgument,
     TerminalCommandExecutable, TerminalEnvironmentBinding, TerminalEnvironmentName,
-    TerminalEnvironmentValue, TerminalExitStatus, TerminalName, TerminalWorkingDirectory,
+    TerminalEnvironmentValue, TerminalExitStatus, TerminalName, TerminalWorkingDirectory, WirePath,
 };
 #[cfg(feature = "nota-text")]
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
@@ -33,8 +33,8 @@ fn environment() -> TerminalEnvironmentBinding {
     }
 }
 
-fn data_socket_path() -> signal_persona::WirePath {
-    signal_persona::WirePath::new("/run/persona/terminal/sessions/operator/data.sock")
+fn data_socket_path() -> WirePath {
+    WirePath::new("/run/persona/terminal/sessions/operator/data.sock")
 }
 
 fn exchange() -> ExchangeIdentifier {

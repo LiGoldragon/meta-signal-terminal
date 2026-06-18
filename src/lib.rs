@@ -145,6 +145,30 @@ impl TerminalWorkingDirectory {
 }
 
 #[derive(
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    Hash,
+)]
+pub struct WirePath(String);
+
+impl WirePath {
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct CreateSession {
@@ -166,7 +190,7 @@ pub struct RetireSession {
 )]
 pub struct SessionCreated {
     pub name: TerminalName,
-    pub data_socket_path: signal_persona::WirePath,
+    pub data_socket_path: WirePath,
 }
 
 #[derive(
