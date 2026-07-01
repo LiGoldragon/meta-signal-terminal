@@ -2,6 +2,10 @@
 
 *Currently named meta Signal contract for privileged Persona terminal session lifecycle.*
 
+## 0.5 · Direction
+
+`meta-signal-terminal` is the meta authority contract for privileged Persona terminal session lifecycle. It carries `CreateSession` and `RetireSession` — operations that start or stop child-process state owned by the terminal component and therefore require meta authority. The meta chain is `orchestrate` → `harness` → `terminal` → `terminal-cell`: orchestrate orders harness work; the harness orders session lifecycle through this surface. Ordinary callers use `signal-terminal` and cannot express session lifecycle orders through that vocabulary.
+
 ## 0 · TL;DR
 
 `meta-signal-terminal` is the meta-only Signal surface for
