@@ -6,7 +6,7 @@ use meta_signal_terminal::{
     TerminalEnvironmentValue, TerminalExitStatus, TerminalName, TerminalWorkingDirectory, WirePath,
 };
 #[cfg(feature = "nota-text")]
-use nota_next::{NotaDecode, NotaEncode, NotaSource};
+use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, Request, SessionEpoch,
     SignalOperationHeads, SubReply,

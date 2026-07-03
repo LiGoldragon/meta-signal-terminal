@@ -167,7 +167,7 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 name = "meta-signal-terminal"
 version = "0.1.0"
 dependencies = [
- "nota-next",
+ "nota",
  "rkyv",
  "signal-frame",
  "signal-terminal",
@@ -195,9 +195,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "nota-next"
+name = "nota"
 version = "0.5.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#7105c2be36067cb3d5b8f744aaf628ffdac7a112"
+source = "git+https://github.com/LiGoldragon/nota.git?branch=main#7105c2be36067cb3d5b8f744aaf628ffdac7a112"
 dependencies = [
  "nota-next-derive",
  "rkyv",
@@ -206,7 +206,7 @@ dependencies = [
 [[package]]
 name = "nota-next-derive"
 version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#7105c2be36067cb3d5b8f744aaf628ffdac7a112"
+source = "git+https://github.com/LiGoldragon/nota.git?branch=main#7105c2be36067cb3d5b8f744aaf628ffdac7a112"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -336,9 +336,9 @@ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 [[package]]
 name = "schema-cc"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#b3be7d0f9161cc01353cfecd0cc0a17678b5030a"
+source = "git+https://github.com/LiGoldragon/schema.git?branch=main#b3be7d0f9161cc01353cfecd0cc0a17678b5030a"
 dependencies = [
- "nota-next",
+ "nota",
  "prettyplease",
  "proc-macro2",
  "quote",
@@ -347,26 +347,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "schema-next"
+name = "schema"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#b3be7d0f9161cc01353cfecd0cc0a17678b5030a"
+source = "git+https://github.com/LiGoldragon/schema.git?branch=main#b3be7d0f9161cc01353cfecd0cc0a17678b5030a"
 dependencies = [
  "blake3",
- "nota-next",
+ "nota",
  "rkyv",
  "schema-cc",
  "thiserror",
 ]
 
 [[package]]
-name = "schema-rust-next"
+name = "schema-rust"
 version = "0.5.3"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#bb4dfe293e03e64e89f899621cc5dfa5bff6958e"
+source = "git+https://github.com/LiGoldragon/schema-rust.git?branch=main#bb4dfe293e03e64e89f899621cc5dfa5bff6958e"
 dependencies = [
  "prettyplease",
  "proc-macro2",
  "quote",
- "schema-next",
+ "schema",
  "syn",
  "thiserror",
 ]
@@ -382,7 +382,7 @@ name = "signal-frame"
 version = "0.2.1"
 source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#b0c2c65c3da5117caa01819655de9952c4a0710c"
 dependencies = [
- "nota-next",
+ "nota",
  "paste",
  "rkyv",
  "signal-frame-macros",
@@ -404,9 +404,9 @@ name = "signal-terminal"
 version = "0.2.1"
 source = "git+https://github.com/LiGoldragon/signal-terminal.git?branch=main#7b0c248b27fe07af11e29d2134c771b232972bfa"
 dependencies = [
- "nota-next",
+ "nota",
  "rkyv",
- "schema-rust-next",
+ "schema-rust",
  "signal-frame",
  "thiserror",
 ]
