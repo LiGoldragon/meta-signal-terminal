@@ -1,0 +1,49 @@
+;; meta-signal-terminal — meta-only terminal session lifecycle contract.
+;; Wire-only: schema-emitted Input/Output roots, rkyv, optional NOTA codec,
+;; and signal-frame request/reply envelope. Runtime session ownership stays in
+;; terminal; ordinary terminal transport stays in signal-terminal.
+
+{
+  TerminalName signal-terminal:lib:TerminalName
+  TerminalExitStatus signal-terminal:lib:TerminalExitStatus
+}
+[(CreateSession CreateSession)
+ (RetireSession RetireSession)]
+[(SessionCreated SessionCreated)
+ (SessionRetired SessionRetired)
+ (MetaTerminalRequestUnimplemented MetaTerminalRequestUnimplemented)]
+{
+  TerminalCommandExecutable String
+  TerminalCommandArgument String
+  TerminalEnvironmentName String
+  TerminalEnvironmentValue String
+  TerminalWorkingDirectory String
+  WirePath String
+
+  Name TerminalName
+  Terminal TerminalName
+  Executable TerminalCommandExecutable
+  Arguments (Vector TerminalCommandArgument)
+  EnvironmentName TerminalEnvironmentName
+  EnvironmentValue TerminalEnvironmentValue
+  Command TerminalCommand
+  Environment (Vector TerminalEnvironmentBinding)
+  WorkingDirectory (Optional TerminalWorkingDirectory)
+  DataSocketPath WirePath
+  ExitStatus (Optional TerminalExitStatus)
+  Operation MetaTerminalOperationKind
+  Reason MetaTerminalUnimplementedReason
+
+  TerminalCommand { Executable Arguments }
+  TerminalEnvironmentBinding { EnvironmentName EnvironmentValue }
+
+  CreateSession { Name Command Environment WorkingDirectory }
+  RetireSession { Name }
+
+  SessionCreated { Name DataSocketPath }
+  SessionRetired { Name ExitStatus }
+
+  MetaTerminalOperationKind [CreateSession RetireSession]
+  MetaTerminalUnimplementedReason [NotBuiltYet DependencyTrackNotLanded]
+  MetaTerminalRequestUnimplemented { Terminal Operation Reason }
+}

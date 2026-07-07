@@ -28,7 +28,7 @@ starting and retiring terminal sessions.
 - `CreateSession` and `RetireSession` live here, not in the ordinary
   terminal contract.
 - Every request variant declares a contract-local operation head
-  through `signal_channel!`.
+  through `schema/lib.schema` and the checked-in TrueSchema artifact.
 - Shared terminal nouns such as `TerminalName` and `TerminalExitStatus`
   are imported from `signal-terminal`; do not duplicate them.
 - Runtime interpretation stays in `terminal`.

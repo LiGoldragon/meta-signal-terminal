@@ -47,7 +47,13 @@ Each Component Command projects to a payloadless Sema class label for
 observation inside the daemon. This contract owns wire vocabulary and
 codecs only.
 
-## 1 · Contract surface
+## 1 · Schema-derived contract surface
+
+`schema/lib.schema` is the single source of truth. `build.rs` lowers it with
+`schema-rust`'s TrueSchema build driver, imports shared terminal nouns from the
+pinned `signal-terminal` producer, writes the checked-in `src/schema/lib.rs`
+when `META_SIGNAL_TERMINAL_UPDATE_SCHEMA_ARTIFACTS=1` is set, and otherwise
+fails the build if the generated Rust drifts.
 
 | Request | Projected Sema class | Meaning |
 |---|---|---|
@@ -62,24 +68,24 @@ codecs only.
 
 ## 2 · Shared nouns
 
-This crate imports terminal identity and status nouns from
-`signal-terminal`:
+This crate cross-imports terminal identity and status nouns from the
+TrueSchema-emitted `signal-terminal` contract:
 
 - `TerminalName`
 - `TerminalExitStatus`
 
-The session data-socket path is a contract-local `WirePath` role because it is
-the meta reply's local viewer-attachment position, not ordinary terminal input,
-capture, prompt-pattern, or worker-lifecycle vocabulary.
+The session data-socket path remains a contract-local `WirePath` role because it
+is the meta reply's local viewer-attachment position, not ordinary terminal
+input, capture, prompt-pattern, or worker-lifecycle vocabulary.
 
 ## 3 · Constraints
 
 | Constraint | Witness |
 |---|---|
-| Session lifecycle orders live only in the meta contract. | The ordinary `signal-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both meta variants. |
-| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's NOTA head and operation head. Sema classification is daemon-side projection only. |
-| Contract code contains no runtime. | Source contains no Kameo, Tokio, storage, or socket implementation. |
-| Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_terminal::TerminalName` and `TerminalExitStatus`. |
+| Session lifecycle orders live only in the meta contract. | The ordinary `signal-terminal::Input` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both meta variants. |
+| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's NOTA head, operation head, and generated route. Sema classification is daemon-side projection only. |
+| Contract code contains no runtime. | Generated-schema tests reject Nexus/SEMA/runtime terms; source contains no Kameo, Tokio, storage, or socket implementation. |
+| Shared terminal nouns are imported, not copied. | Generated-schema tests assert `TerminalName` and `TerminalExitStatus` are `signal-terminal` imports, not local declarations. |
 
 ## 4 · Non-ownership
 
@@ -92,12 +98,17 @@ capture, prompt-pattern, or worker-lifecycle vocabulary.
 ## Code map
 
 ```text
+schema/
+└── lib.schema          — TrueSchema source for the meta terminal signal surface
 src/
-└── lib.rs              — meta request/reply records and signal_channel! invocation
+├── lib.rs              — re-exports generated schema API and compatibility methods
+└── schema/lib.rs       — checked-in schema-rust artifact
 examples/
 └── canonical.nota      — meta request/reply examples
 tests/
-└── round_trip.rs       — rkyv frame + NOTA + operation-head witnesses
+├── round_trip.rs       — rkyv frame + NOTA + operation-head witnesses
+├── generated_schema.rs — generated short-header/import/runtime-boundary witnesses
+└── dependency_boundary.rs — producer pin and renamed-stack guards
 ```
 
 ## See also

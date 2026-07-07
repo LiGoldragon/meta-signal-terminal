@@ -25,35 +25,50 @@
         ];
         craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
         examplesFilter = path: _type: builtins.match ".*/examples(/.*)?$" path != null;
+        schemaFilter = path: type:
+          type == "regular"
+            && (pkgs.lib.hasSuffix ".schema" path);
         sourceFilter = path: type:
-          (craneLib.filterCargoSources path type) || (examplesFilter path type);
+          (craneLib.filterCargoSources path type)
+            || (examplesFilter path type)
+            || (schemaFilter path type);
         src = pkgs.lib.cleanSourceWith {
           src = ./.;
           filter = sourceFilter;
           name = "source";
         };
-        cargoVendorDir = craneLib.vendorCargoDeps { inherit src; };
-        commonArgs = {
-          inherit src cargoVendorDir;
+        cargoVendorDirectory = craneLib.vendorCargoDeps { inherit src; };
+        commonArguments = {
+          inherit src cargoVendorDirectory;
           strictDeps = true;
         };
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+        cargoArtifacts = craneLib.buildDepsOnly commonArguments;
       in
       {
-        packages.default = craneLib.buildPackage (commonArgs // { inherit cargoArtifacts; });
+        packages.default = craneLib.buildPackage (commonArguments // { inherit cargoArtifacts; });
         checks = {
-          build = craneLib.cargoBuild (commonArgs // { inherit cargoArtifacts; });
-          test = craneLib.cargoTest (commonArgs // { inherit cargoArtifacts; });
-          test-round-trip = craneLib.cargoTest (commonArgs // {
+          build = craneLib.cargoBuild (commonArguments // { inherit cargoArtifacts; });
+          test = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; });
+          test-round-trip = craneLib.cargoTest (commonArguments // {
             inherit cargoArtifacts;
             cargoTestExtraArgs = "--test round_trip";
           });
-          doc = craneLib.cargoDoc (commonArgs // {
+          test-generated-schema = craneLib.cargoTest (commonArguments // {
+            inherit cargoArtifacts;
+            cargoTestExtraArgs = "--test generated_schema";
+          });
+          generated-schema-source-checked-in = pkgs.runCommand "meta-signal-terminal-generated-schema-source-checked-in" { } ''
+            test -f ${src}/schema/lib.schema
+            test -f ${src}/src/schema/lib.rs
+            ! grep -R "include!(concat!(env!(\"OUT_DIR\")" ${src}/src ${src}/build.rs
+            touch $out
+          '';
+          doc = craneLib.cargoDoc (commonArguments // {
             inherit cargoArtifacts;
             RUSTDOCFLAGS = "-D warnings";
           });
           fmt = craneLib.cargoFmt { inherit src; };
-          clippy = craneLib.cargoClippy (commonArgs // {
+          clippy = craneLib.cargoClippy (commonArguments // {
             inherit cargoArtifacts;
             cargoClippyExtraArgs = "--all-targets -- -D warnings";
           });
