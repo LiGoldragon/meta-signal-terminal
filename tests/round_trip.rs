@@ -5,15 +5,15 @@ use meta_signal_terminal::{
     TerminalCommandExecutable, TerminalEnvironmentBinding, TerminalEnvironmentName,
     TerminalEnvironmentValue, TerminalExitStatus, TerminalName, TerminalWorkingDirectory, WirePath,
 };
-#[cfg(feature = "nota-text")]
-use nota::{NotaDecode, NotaEncode, NotaSource};
+#[cfg(feature = "dotos-text")]
+use dotos::{DotosDecode, DotosEncode, DotosSource};
 use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, Request, SessionEpoch,
-    SignalOperationHeads, SubReply,
+    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch,
+    RootCode, SignalOperationHeads, SubReply, VariantCode, WireRoute,
 };
 
-#[cfg(feature = "nota-text")]
-const CANONICAL: &str = include_str!("../examples/canonical.nota");
+#[cfg(feature = "dotos-text")]
+const CANONICAL: &str = include_str!("../examples/canonical.dotos");
 
 fn terminal() -> TerminalName {
     TerminalName::new("operator".to_string())
@@ -46,10 +46,7 @@ fn exchange() -> ExchangeIdentifier {
 }
 
 fn round_trip_request(request: MetaTerminalRequest) -> MetaTerminalRequest {
-    let frame = Frame::new(FrameBody::Request {
-        exchange: exchange(),
-        request: Request::from_payload(request),
-    });
+    let frame = request.into_frame(exchange()).expect("build request frame");
     let bytes = frame.encode_length_prefixed().expect("encode");
     let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
     match decoded.into_body() {
@@ -63,10 +60,13 @@ fn round_trip_request(request: MetaTerminalRequest) -> MetaTerminalRequest {
 }
 
 fn round_trip_reply(reply: MetaTerminalReply) -> MetaTerminalReply {
-    let frame = Frame::new(FrameBody::Reply {
-        exchange: exchange(),
-        reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
-    });
+    let frame = Frame::new(
+        WireRoute::new(RootCode::new(0), VariantCode::new(0)),
+        FrameBody::Reply {
+            exchange: exchange(),
+            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
+        },
+    );
     let bytes = frame.encode_length_prefixed().expect("encode");
     let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
     match decoded.into_body() {
@@ -81,21 +81,21 @@ fn round_trip_reply(reply: MetaTerminalReply) -> MetaTerminalReply {
     }
 }
 
-#[cfg(feature = "nota-text")]
-fn round_trip_nota<T>(value: T, expected: &str)
+#[cfg(feature = "dotos-text")]
+fn round_trip_dotos<T>(value: T, expected: &str)
 where
-    T: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
+    T: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
 {
-    let encoded = value.to_nota();
+    let encoded = value.to_dotos();
     assert_eq!(encoded, expected);
 
-    let recovered = NotaSource::new(&encoded)
+    let recovered = DotosSource::new(&encoded)
         .parse::<T>()
-        .expect("decode nota text");
+        .expect("decode dotos text");
     assert_eq!(recovered, value);
     assert!(
         CANONICAL.contains(expected),
-        "examples/canonical.nota missing line: {expected}"
+        "examples/canonical.dotos missing line: {expected}"
     );
 }
 
@@ -164,10 +164,10 @@ fn meta_terminal_request_exposes_contract_owned_operation_kind() {
     );
 }
 
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 #[test]
 fn meta_terminal_canonical_examples_round_trip() {
-    round_trip_nota(
+    round_trip_dotos(
         MetaTerminalRequest::CreateSession(CreateSession {
             name: terminal(),
             command: TerminalCommand {
@@ -177,32 +177,32 @@ fn meta_terminal_canonical_examples_round_trip() {
             environment: Vec::new(),
             working_directory: None,
         }),
-        "(CreateSession (operator (pi []) [] None))",
+        "(CreateSession {operator {pi []} [] None})",
     );
-    round_trip_nota(
+    round_trip_dotos(
         MetaTerminalRequest::RetireSession(RetireSession { name: terminal() }),
-        "(RetireSession (operator))",
+        "(RetireSession {operator})",
     );
-    round_trip_nota(
+    round_trip_dotos(
         MetaTerminalReply::SessionCreated(SessionCreated {
             name: terminal(),
             data_socket_path: data_socket_path(),
         }),
-        "(SessionCreated (operator /run/persona/terminal/sessions/operator/data.sock))",
+        "(SessionCreated {operator /run/persona/terminal/sessions/operator/data.sock})",
     );
-    round_trip_nota(
+    round_trip_dotos(
         MetaTerminalReply::SessionRetired(SessionRetired {
             name: terminal(),
             exit_status: Some(TerminalExitStatus::StatusUnavailable),
         }),
-        "(SessionRetired (operator (Some StatusUnavailable)))",
+        "(SessionRetired {operator Some.StatusUnavailable})",
     );
-    round_trip_nota(
+    round_trip_dotos(
         MetaTerminalReply::MetaTerminalRequestUnimplemented(MetaTerminalRequestUnimplemented {
             terminal: terminal(),
             operation: MetaTerminalOperationKind::CreateSession,
             reason: MetaTerminalUnimplementedReason::NotBuiltYet,
         }),
-        "(MetaTerminalRequestUnimplemented (operator CreateSession NotBuiltYet))",
+        "(MetaTerminalRequestUnimplemented {operator CreateSession NotBuiltYet})",
     );
 }

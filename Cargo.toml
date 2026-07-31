@@ -13,13 +13,13 @@ name = "meta_signal_terminal"
 path = "src/lib.rs"
 
 [features]
-default = ["nota-text"]
-nota-text = ["signal-frame/nota-text"]
+default = ["dotos-text"]
+dotos-text = ["signal-frame/dotos-text"]
 
 [dependencies]
-signal-frame            = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main" }
-signal-terminal = { git = "https://github.com/LiGoldragon/signal-terminal.git", branch = "main" }
-nota               = { git = "https://github.com/LiGoldragon/nota.git", branch = "main" }
+signal-frame = { git = "https://github.com/LiGoldragon/signal-frame.git", rev = "ca72b2d1151f5b3df536295b2ba68f039536ec19", default-features = false }
+signal-terminal = { git = "https://github.com/LiGoldragon/signal-terminal.git", rev = "c247cbfe07313696f9053ecfb201fdf9c46e456b" }
+dotos = { git = "https://github.com/LiGoldragon/dotos.git", rev = "80c7b17f7ad3cf547d2624c6a243e5de5f85c9f3" }
 rkyv                    = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 thiserror               = "2"
 

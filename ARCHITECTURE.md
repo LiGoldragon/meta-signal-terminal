@@ -77,7 +77,7 @@ capture, prompt-pattern, or worker-lifecycle vocabulary.
 | Constraint | Witness |
 |---|---|
 | Session lifecycle orders live only in the meta contract. | The ordinary `signal-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both meta variants. |
-| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's NOTA head and operation head. Sema classification is daemon-side projection only. |
+| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's DOTOS head and operation head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, storage, or socket implementation. |
 | Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_terminal::TerminalName` and `TerminalExitStatus`. |
 
@@ -95,9 +95,9 @@ capture, prompt-pattern, or worker-lifecycle vocabulary.
 src/
 └── lib.rs              — meta request/reply records and signal_channel! invocation
 examples/
-└── canonical.nota      — meta request/reply examples
+└── canonical.dotos      — meta request/reply examples
 tests/
-└── round_trip.rs       — rkyv frame + NOTA + operation-head witnesses
+└── round_trip.rs       — rkyv frame + DOTOS + operation-head witnesses
 ```
 
 ## See also

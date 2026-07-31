@@ -1,13 +1,13 @@
 #[test]
-fn terminal_meta_contract_declares_local_nota_text_feature_for_signal_frame_macros() {
+fn terminal_meta_contract_declares_local_dotos_text_feature_for_signal_frame_macros() {
     let cargo_toml = include_str!("../Cargo.toml");
 
     assert!(
-        cargo_toml.contains("default = [\"nota-text\"]"),
-        "direct meta-signal-terminal users keep the NOTA projection by default",
+        cargo_toml.contains("default = [\"dotos-text\"]"),
+        "direct meta-signal-terminal users keep the DOTOS projection by default",
     );
     assert!(
-        cargo_toml.contains("nota-text = [\"signal-frame/nota-text\"]"),
-        "signal-frame macro-generated NOTA traits are gated through a local feature",
+        cargo_toml.contains("dotos-text = [\"signal-frame/dotos-text\"]"),
+        "signal-frame macro-generated DOTOS traits are gated through a local feature",
     );
 }

@@ -3,17 +3,27 @@
 //! Ordinary terminal transport lives in `signal-terminal`. This crate
 //! carries the meta-only vocabulary that starts and retires terminal sessions.
 
-use nota::{NotaDecode, NotaEncode};
+use dotos::{DotosDecode, DotosEncode};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 pub use signal_terminal::{TerminalExitStatus, TerminalName};
+
+/// The meta contract occupies the MetaSignalSpirit wire family.
+pub enum MetaTerminalWire {}
+
+impl signal_frame::WireContract for MetaTerminalWire {
+    const BINDING: signal_frame::ContractBinding = signal_frame::ContractBinding::new(
+        signal_frame::ContractId::new(core::num::NonZeroU32::new(2).unwrap()),
+        signal_frame::WireRevision::new(core::num::NonZeroU16::MIN),
+    );
+}
 
 #[derive(
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -36,8 +46,8 @@ impl TerminalCommandExecutable {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -57,7 +67,7 @@ impl TerminalCommandArgument {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct TerminalCommand {
     pub executable: TerminalCommandExecutable,
@@ -68,8 +78,8 @@ pub struct TerminalCommand {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -92,8 +102,8 @@ impl TerminalEnvironmentName {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -113,7 +123,7 @@ impl TerminalEnvironmentValue {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct TerminalEnvironmentBinding {
     pub name: TerminalEnvironmentName,
@@ -124,8 +134,8 @@ pub struct TerminalEnvironmentBinding {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -148,8 +158,8 @@ impl TerminalWorkingDirectory {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     PartialEq,
@@ -169,7 +179,7 @@ impl WirePath {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct CreateSession {
     pub name: TerminalName,
@@ -179,14 +189,14 @@ pub struct CreateSession {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct RetireSession {
     pub name: TerminalName,
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct SessionCreated {
     pub name: TerminalName,
@@ -194,7 +204,7 @@ pub struct SessionCreated {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct SessionRetired {
     pub name: TerminalName,
@@ -205,8 +215,8 @@ pub struct SessionRetired {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     Copy,
@@ -220,7 +230,7 @@ pub enum MetaTerminalOperationKind {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct MetaTerminalRequestUnimplemented {
     pub terminal: TerminalName,
@@ -232,8 +242,8 @@ pub struct MetaTerminalRequestUnimplemented {
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
+    DotosEncode,
+    DotosDecode,
     Debug,
     Clone,
     Copy,
@@ -247,7 +257,7 @@ pub enum MetaTerminalUnimplementedReason {
 }
 
 signal_channel! {
-    channel MetaTerminal {
+    channel MetaTerminal contract MetaTerminalWire {
         operation CreateSession(CreateSession),
         operation RetireSession(RetireSession),
     }
