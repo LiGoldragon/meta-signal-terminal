@@ -89,20 +89,6 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "ethos-zero"
-version = "6.1.0"
-source = "git+https://github.com/LiGoldragon/ethos-zero?rev=6e5ad400c2aed197c5daadf9a8bb6abf183b1439#6e5ad400c2aed197c5daadf9a8bb6abf183b1439"
-dependencies = [
- "datom-codec 0.25.4 (git+https://github.com/LiGoldragon/datom-codec?rev=35d26d822870356af9b04cacfec40d85600b541d)",
- "prettyplease",
- "proc-macro2",
- "protos",
- "quote",
- "rkyv",
- "syn 3.0.5",
-]
-
-[[package]]
-name = "ethos-zero"
 version = "6.1.2"
 source = "git+https://github.com/LiGoldragon/ethos-zero?rev=daf007296a19ad2f9c8a1e67e102b2e3f09db327#daf007296a19ad2f9c8a1e67e102b2e3f09db327"
 dependencies = [
@@ -168,10 +154,10 @@ dependencies = [
 
 [[package]]
 name = "meta-signal-terminal"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "datom-codec 0.25.4 (git+https://github.com/LiGoldragon/datom-codec?rev=2dad91afce6237d772767bd4ab19f31276e6999e)",
- "ethos-zero 6.1.2",
+ "ethos-zero",
  "protos",
  "rkyv",
  "signal-terminal",
@@ -318,11 +304,11 @@ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
 name = "signal-terminal"
-version = "1.0.0"
-source = "git+https://github.com/LiGoldragon/signal-terminal.git?rev=d92f160e2cd9e25bc83322be22130d7737d50db7#d92f160e2cd9e25bc83322be22130d7737d50db7"
+version = "1.0.1"
+source = "git+https://github.com/LiGoldragon/signal-terminal.git?rev=ddbd3237a57e3ca19b5f6208a93770c5eee73aa3#ddbd3237a57e3ca19b5f6208a93770c5eee73aa3"
 dependencies = [
  "datom-codec 0.25.4 (git+https://github.com/LiGoldragon/datom-codec?rev=2dad91afce6237d772767bd4ab19f31276e6999e)",
- "ethos-zero 6.1.0",
+ "ethos-zero",
  "protos",
  "rkyv",
 ]
