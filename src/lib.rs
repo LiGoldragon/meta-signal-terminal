@@ -1,297 +1,72 @@
-//! Meta Signal contract — privileged `terminal` session lifecycle.
-//!
-//! Ordinary terminal transport lives in `signal-terminal`. This crate
-//! carries the meta-only vocabulary that starts and retires terminal sessions.
+pub mod generated;
+pub use generated::signal::*;
 
-use dotos::{DotosDecode, DotosEncode};
-use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
-use signal_frame::signal_channel;
-pub use signal_terminal::{TerminalExitStatus, TerminalName};
+use std::marker::PhantomData;
 
-/// The meta contract occupies the MetaSignalSpirit wire family.
-pub enum MetaTerminalWire {}
+pub const ETHOS: &str = include_str!("../ethos/signal.ethos");
 
-impl signal_frame::WireContract for MetaTerminalWire {
-    const BINDING: signal_frame::ContractBinding = signal_frame::ContractBinding::new(
-        signal_frame::ContractId::new(core::num::NonZeroU32::new(2).unwrap()),
-        signal_frame::WireRevision::new(core::num::NonZeroU16::MIN),
-    );
+/// A portable rkyv Signal frame whose target contract is carried in its type.
+pub struct Signal<T> {
+    bytes: Vec<u8>,
+    target: PhantomData<fn() -> T>,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct TerminalCommandExecutable(String);
+/// Data that can form a portable Signal frame.
+pub trait Signalizable: Sized {
+    fn signalize(&self) -> Result<Signal<Self>, rkyv::rancor::Error>;
+}
 
-impl TerminalCommandExecutable {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
+/// A frame exposes its peer-wire bytes for transport framing.
+pub trait ByteViewable {
+    fn bytes(&self) -> &[u8];
+}
 
-    pub fn as_str(&self) -> &str {
-        &self.0
+/// A typed portable Signal can restore the contract value it carries.
+pub trait Restorable<T> {
+    fn restore(&self) -> Result<T, rkyv::rancor::Error>;
+}
+
+impl Signalizable for Query {
+    fn signalize(&self) -> Result<Signal<Self>, rkyv::rancor::Error> {
+        Ok(Signal {
+            bytes: rkyv::to_bytes::<rkyv::rancor::Error>(self)?.to_vec(),
+            target: PhantomData,
+        })
     }
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct TerminalCommandArgument(String);
-
-impl TerminalCommandArgument {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
+impl Signalizable for Response {
+    fn signalize(&self) -> Result<Signal<Self>, rkyv::rancor::Error> {
+        Ok(Signal {
+            bytes: rkyv::to_bytes::<rkyv::rancor::Error>(self)?.to_vec(),
+            target: PhantomData,
+        })
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct TerminalCommand {
-    pub executable: TerminalCommandExecutable,
-    pub arguments: Vec<TerminalCommandArgument>,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct TerminalEnvironmentName(String);
-
-impl TerminalEnvironmentName {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct TerminalEnvironmentValue(String);
-
-impl TerminalEnvironmentValue {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct TerminalEnvironmentBinding {
-    pub name: TerminalEnvironmentName,
-    pub value: TerminalEnvironmentValue,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct TerminalWorkingDirectory(String);
-
-impl TerminalWorkingDirectory {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub struct WirePath(String);
-
-impl WirePath {
-    pub fn new(value: impl Into<String>) -> Self {
-        Self(value.into())
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct CreateSession {
-    pub name: TerminalName,
-    pub command: TerminalCommand,
-    pub environment: Vec<TerminalEnvironmentBinding>,
-    pub working_directory: Option<TerminalWorkingDirectory>,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct RetireSession {
-    pub name: TerminalName,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct SessionCreated {
-    pub name: TerminalName,
-    pub data_socket_path: WirePath,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct SessionRetired {
-    pub name: TerminalName,
-    pub exit_status: Option<TerminalExitStatus>,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum MetaTerminalOperationKind {
-    CreateSession,
-    RetireSession,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, DotosEncode, DotosDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct MetaTerminalRequestUnimplemented {
-    pub terminal: TerminalName,
-    pub operation: MetaTerminalOperationKind,
-    pub reason: MetaTerminalUnimplementedReason,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    DotosEncode,
-    DotosDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum MetaTerminalUnimplementedReason {
-    NotBuiltYet,
-    DependencyTrackNotLanded,
-}
-
-signal_channel! {
-    channel MetaTerminal contract MetaTerminalWire {
-        operation CreateSession(CreateSession),
-        operation RetireSession(RetireSession),
-    }
-    reply MetaTerminalReply {
-        SessionCreated(SessionCreated),
-        SessionRetired(SessionRetired),
-        MetaTerminalRequestUnimplemented(MetaTerminalRequestUnimplemented),
-    }
-}
-
-pub type MetaTerminalRequest = Operation;
-pub type MetaTerminalFrame = Frame;
-pub type MetaTerminalFrameBody = FrameBody;
-pub type MetaTerminalRequestBuilder = RequestBuilder;
-pub type ChannelRequest = Operation;
-pub type ChannelReply = MetaTerminalReply;
-
-impl MetaTerminalRequest {
-    pub fn operation_kind(&self) -> MetaTerminalOperationKind {
-        match self {
-            Self::CreateSession(_) => MetaTerminalOperationKind::CreateSession,
-            Self::RetireSession(_) => MetaTerminalOperationKind::RetireSession,
+impl<T> From<Vec<u8>> for Signal<T> {
+    fn from(bytes: Vec<u8>) -> Self {
+        Self {
+            bytes,
+            target: PhantomData,
         }
     }
 }
 
-impl From<CreateSession> for MetaTerminalRequest {
-    fn from(payload: CreateSession) -> Self {
-        Self::CreateSession(payload)
+impl<T> ByteViewable for Signal<T> {
+    fn bytes(&self) -> &[u8] {
+        &self.bytes
     }
 }
 
-impl From<RetireSession> for MetaTerminalRequest {
-    fn from(payload: RetireSession) -> Self {
-        Self::RetireSession(payload)
+impl Restorable<Query> for Signal<Query> {
+    fn restore(&self) -> Result<Query, rkyv::rancor::Error> {
+        rkyv::from_bytes(self.bytes())
+    }
+}
+
+impl Restorable<Response> for Signal<Response> {
+    fn restore(&self) -> Result<Response, rkyv::rancor::Error> {
+        rkyv::from_bytes(self.bytes())
     }
 }
