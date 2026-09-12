@@ -9,7 +9,7 @@ build="build.rs"
 default=[]
 datom=["dep:datom-codec","dep:protos","signal-terminal/datom"]
 [dependencies]
-signal-terminal={git="https://github.com/LiGoldragon/signal-terminal.git",rev="ddbd3237a57e3ca19b5f6208a93770c5eee73aa3",default-features=false}
+signal-terminal={git="https://github.com/LiGoldragon/signal-terminal.git",rev="b0523f770cf1967b70793672542e2ba3a21f7cea",default-features=false}
 datom-codec={git="https://github.com/LiGoldragon/datom-codec",rev="18129314966c5043ee659de452b6f976fa319b21",optional=true}
 protos={git="https://github.com/LiGoldragon/protos",rev="e8701521a37c698d6a2eb933618b9d5d1c6f6ffb",optional=true}
 rkyv={version="0.8",default-features=false,features=["std","bytecheck","little_endian","pointer_width_32","unaligned"]}
