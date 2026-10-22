@@ -32,7 +32,7 @@ processes.
 ## Migration history — signal-frame operation heads (2026-06-07)
 
 The public wire carries contract-local `signal-frame` operation heads:
-`CreateSession` and `RetireSession`. It does not carry Sema
+`CreateSession` and `RetireSession`. It does not carry Memory
 classification words such as `Mutate` or `Retract`.
 
 Daemon-side lowering from contract operation to typed Component Commands
@@ -43,13 +43,13 @@ Daemon-side lowering from contract operation to typed Component Commands
 `TerminalCommand::StopChildProcess`) lives in the `terminal`
 daemon.
 
-Each Component Command projects to a payloadless Sema class label for
+Each Component Command projects to a payloadless Memory class label for
 observation inside the daemon. This contract owns wire vocabulary and
 codecs only.
 
 ## 1 · Contract surface
 
-| Request | Projected Sema class | Meaning |
+| Request | Projected Memory class | Meaning |
 |---|---|---|
 | `CreateSession` | `Mutate` (session-record component projection) | Install a named terminal session in `terminal` and start the configured child process. |
 | `RetireSession` | `Retract` | Retire a named terminal session and return its terminal exit status when available. |
@@ -77,7 +77,7 @@ capture, prompt-pattern, or worker-lifecycle vocabulary.
 | Constraint | Witness |
 |---|---|
 | Session lifecycle orders live only in the meta contract. | The ordinary `signal-terminal::TerminalRequest` enum has no `CreateSession` or `RetireSession` variants; this crate's tests round-trip both meta variants. |
-| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's Datom head and operation head. Sema classification is daemon-side projection only. |
+| Every meta request is a contract-local verb in verb form. | Round-trip tests assert each variant's Datom head and operation head. Memory classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, storage, or socket implementation. |
 | Shared terminal nouns are imported, not copied. | `src/lib.rs` uses `signal_terminal::TerminalName` and `TerminalExitStatus`. |
 
@@ -87,7 +87,7 @@ capture, prompt-pattern, or worker-lifecycle vocabulary.
 - No ordinary terminal input/capture/prompt-gate vocabulary.
 - No raw PTY or viewer byte plane.
 - No runtime permission enforcement.
-- No sema-engine tables or reducers.
+- No memory-engine tables or reducers.
 
 ## Code map
 
