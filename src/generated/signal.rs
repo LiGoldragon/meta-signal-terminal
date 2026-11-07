@@ -1,8 +1,17 @@
-#![allow(dead_code, non_camel_case_types, non_snake_case)]
+#![allow(
+    dead_code,
+    non_camel_case_types,
+    non_snake_case,
+    clippy::type_complexity
+)]
 #[rustfmt::skip]
-pub type TerminalCommandExecutable = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalCommandExecutable(pub String);
 #[rustfmt::skip]
-pub type TerminalCommandArgument = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalCommandArgument(pub String);
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
@@ -11,11 +20,17 @@ pub struct TerminalCommand {
     pub terminal_command_arguments: TerminalCommandArguments,
 }
 #[rustfmt::skip]
-pub type TerminalCommandArguments = std::vec::Vec<TerminalCommandArgument>;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalCommandArguments(pub std::vec::Vec<TerminalCommandArgument>);
 #[rustfmt::skip]
-pub type TerminalEnvironmentName = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalEnvironmentName(pub String);
 #[rustfmt::skip]
-pub type TerminalEnvironmentValue = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalEnvironmentValue(pub String);
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
@@ -24,11 +39,17 @@ pub struct TerminalEnvironmentBinding {
     pub terminal_environment_value: TerminalEnvironmentValue,
 }
 #[rustfmt::skip]
-pub type TerminalEnvironment = std::vec::Vec<TerminalEnvironmentBinding>;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalEnvironment(pub std::vec::Vec<TerminalEnvironmentBinding>);
 #[rustfmt::skip]
-pub type TerminalWorkingDirectory = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct TerminalWorkingDirectory(pub String);
 #[rustfmt::skip]
-pub type WirePath = String;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct WirePath(pub String);
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
@@ -39,9 +60,13 @@ pub struct CreateSession {
     pub selected_working_directory: SelectedWorkingDirectory,
 }
 #[rustfmt::skip]
-pub type SelectedWorkingDirectory = std::option::Option<TerminalWorkingDirectory>;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct SelectedWorkingDirectory(pub std::option::Option<TerminalWorkingDirectory>);
 #[rustfmt::skip]
-pub type RetireSession = signal_terminal::TerminalName;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct RetireSession(pub signal_terminal::TerminalName);
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
@@ -57,7 +82,11 @@ pub struct SessionRetired {
     pub selected_exit_status: SelectedExitStatus,
 }
 #[rustfmt::skip]
-pub type SelectedExitStatus = std::option::Option<signal_terminal::TerminalExitStatus>;
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub struct SelectedExitStatus(
+    pub std::option::Option<signal_terminal::TerminalExitStatus>,
+);
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
